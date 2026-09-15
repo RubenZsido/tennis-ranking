@@ -32,6 +32,12 @@ export function ageFromDob(dateOfBirth: string): number {
   return age
 }
 
+/** Approximate DOB from age (Jan 1 of birth year) for form round-trip */
+export function dobFromAge(age: number): string {
+  const year = new Date().getFullYear() - Math.round(age)
+  return `${year}-01-01`
+}
+
 /** Positive delta = moved up (better rank number decreased) */
 export function rankChange(player: Pick<Player, 'rank' | 'previousRank'>): number | null {
   if (player.previousRank == null) return null

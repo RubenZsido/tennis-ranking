@@ -1,0 +1,109 @@
+import { useMemo, useState } from 'react'
+import { usePlayers } from '../context/PlayersContext'
+import type { Player } from '../types/player'
+import { countryFlag } from '../utils/playerFormat'
+import { PlayerForm } from './PlayerForm'
+import '../players-admin.css'
+
+type EditorMode = { kind: 'closed' } | { kind: 'create' } | { kind: 'edit'; id: string }
+
+export function PlayersAdminPage() {
+  const { players, upsertPlayer, getPlayerById } = usePlayers()
+  const [editor, setEditor] = useState<EditorMode>({ kind: 'closed' })
+
+  const sorted = useMemo(
+    () => [...players].sort((a, b) => a.rank - b.rank),
+    [players],
+  )
+
+  const editingPlayer: Player | null =
+    editor.kind === 'edit' ? getPlayerById(editor.id) ?? null : null
+
+  const existingIds = useMemo(
+    () =>
+      players
+        .filter((p) => editor.kind !== 'edit' || p.id !== editor.id)
+        .map((p) => p.id),
+    [players, editor],
+  )
+
+  function openCreate() {
+    setEditor({ kind: 'create' })
+  }
+
+  function openEdit(id: string) {
+    setEditor({ kind: 'edit', id })
+  }
+
+  function closeEditor() {
+    setEditor({ kind: 'closed' })
+  }
+
+  function handleSave(player: Player) {
+    upsertPlayer(player)
+    closeEditor()
+  }
+
+  const showForm = editor.kind !== 'closed'
+
+  return (
+    <div className="players-admin">
+      <header className="players-admin-header">
+        <div>
+          <h1>Manage players</h1>
+          <p className="players-admin-sub">Same fields as the player detail panel.</p>
+        </div>
+        <button type="button" className="btn btn-primary" onClick={openCreate}>
+          Add player
+        </button>
+      </header>
+
+      <div className={`players-admin-layout${showForm ? ' players-admin-layout--form' : ''}`}>
+        <section className="players-admin-table-wrap" aria-label="Player list">
+          <table className="players-admin-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Country</th>
+                <th>Points</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {sorted.map((p) => (
+                <tr key={p.id} className={editor.kind === 'edit' && editor.id === p.id ? 'is-active' : ''}>
+                  <td>{p.rank}</td>
+                  <td>{p.displayName}</td>
+                  <td>
+                    <span title={p.countryCode}>
+                      {countryFlag(p.countryCode)} {p.countryCode}
+                    </span>
+                  </td>
+                  <td>{p.points.toLocaleString()}</td>
+                  <td>
+                    <button type="button" className="btn btn-ghost btn-sm" onClick={() => openEdit(p.id)}>
+                      Edit
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+
+        {showForm && (
+          <aside className="players-admin-form-wrap" aria-label="Player editor">
+            <PlayerForm
+              key={editor.kind === 'create' ? 'create' : editor.id}
+              initial={editor.kind === 'edit' ? editingPlayer : null}
+              existingIds={existingIds}
+              onSave={handleSave}
+              onCancel={closeEditor}
+            />
+          </aside>
+        )}
+      </div>
+    </div>
+  )
+}
