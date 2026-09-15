@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { usePlayers } from '../context/PlayersContext'
-import { rankingMeta } from '../data/mockPlayers'
+import { RANKING_AS_OF } from '../utils/playerDefaults'
 import { formatDate } from '../utils/playerFormat'
 import { PlayerDetailPanel } from './PlayerDetailPanel'
 import { PlayerRankingList } from './PlayerRankingList'
@@ -12,7 +12,8 @@ export function RankingPage() {
     () => [...players].sort((a, b) => a.rank - b.rank),
     [players],
   )
-  const rankingAsOf = sortedPlayers[0]?.rankingAsOf ?? rankingMeta.rankingAsOf
+  // Date comes from DB rows; constant is only a header fallback when the list is empty
+  const rankingAsOf = sortedPlayers[0]?.rankingAsOf ?? RANKING_AS_OF
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [mobileShowDetail, setMobileShowDetail] = useState(false)
 
@@ -53,7 +54,9 @@ export function RankingPage() {
       <header className="ranking-app-header">
         <h1>ATP Singles Ranking</h1>
         <p className="ranking-app-sub">
-          As of {formatDate(rankingAsOf)} · Top {sortedPlayers.length}
+          {sortedPlayers.length === 0
+            ? 'No players in the database'
+            : `As of ${formatDate(rankingAsOf)} · Top ${sortedPlayers.length}`}
         </p>
       </header>
 

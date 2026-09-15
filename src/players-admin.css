@@ -76,6 +76,11 @@
   border-bottom: none;
 }
 
+.players-admin-empty {
+  text-align: center;
+  color: var(--text);
+}
+
 .players-admin-form-wrap {
   border: 1px solid var(--border);
   border-radius: 12px;

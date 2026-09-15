@@ -1,10 +1,10 @@
-/** Tour and discipline — fixed at create for ATP singles mock */
+/** Tour and discipline — ATP singles only */
 export type Tour = 'ATP'
 export type Discipline = 'singles'
 export type Handedness = 'right' | 'left'
 export type Backhand = 'one' | 'two'
 
-/** Shared ranking week metadata (mock header) */
+/** Shared ranking week metadata */
 export interface RankingMeta {
   rankingAsOf: string
   tour: Tour

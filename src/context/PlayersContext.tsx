@@ -34,6 +34,8 @@ export function PlayersProvider({ children }: { children: ReactNode }) {
       const list = await playersApi.fetchPlayers()
       setPlayers(list)
     } catch (e) {
+      // Never keep a local roster — list is empty unless the API (DB) responded
+      setPlayers([])
       setError(e instanceof Error ? e.message : 'Failed to load players.')
     } finally {
       setLoading(false)

@@ -114,6 +114,13 @@ export function PlayersAdminPage() {
               </tr>
             </thead>
             <tbody>
+              {sorted.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="players-admin-empty">
+                    No players in the database.
+                  </td>
+                </tr>
+              )}
               {sorted.map((p) => (
                 <tr key={p.id} className={editor.kind === 'edit' && editor.id === p.id ? 'is-active' : ''}>
                   <td>{p.rank}</td>

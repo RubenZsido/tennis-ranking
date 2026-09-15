@@ -1,6 +1,8 @@
-import { RANKING_AS_OF } from '../data/mockPlayers'
 import type { Backhand, Handedness, Player } from '../types/player'
 import { ageFromDob, dobFromAge } from './playerFormat'
+
+/** Default ranking week for newly created players */
+export const RANKING_AS_OF = '2026-09-08'
 
 /** Matches labels on the player detail panel */
 export type PlayerFormData = {

@@ -21,43 +21,47 @@ export function PlayerRankingList({ players, selectedId, onSelect }: Props) {
         <span className="col-points">Pts</span>
         <span className="col-move">+/-</span>
       </div>
-      <ul
-        className="ranking-list"
-        role="listbox"
-        aria-label="ATP singles ranking"
-      >
-        {players.map((player) => {
-          const selected = player.id === selectedId
-          const movement = rankMovement(player)
-          return (
-            <li key={player.id} role="presentation">
-              <button
-                type="button"
-                role="option"
-                aria-selected={selected}
-                className={`ranking-row${selected ? ' is-selected' : ''}`}
-                onClick={() => onSelect(player.id)}
-              >
-                <span className="col-rank">{player.rank}</span>
-                <span className="col-player">
-                  <span className="player-flag" aria-hidden="true">
-                    {countryFlag(player.countryCode)}
-                  </span>
-                  <span className="player-name">{player.displayName}</span>
-                  <span className="player-country">{player.countryCode}</span>
-                </span>
-                <span className="col-points">{formatPoints(player.points)}</span>
-                <span
-                  className={`col-move movement-${movement}`}
-                  title="Rank change vs previous week"
+      {players.length === 0 ? (
+        <p className="ranking-list-empty">No players to show.</p>
+      ) : (
+        <ul
+          className="ranking-list"
+          role="listbox"
+          aria-label="ATP singles ranking"
+        >
+          {players.map((player) => {
+            const selected = player.id === selectedId
+            const movement = rankMovement(player)
+            return (
+              <li key={player.id} role="presentation">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={selected}
+                  className={`ranking-row${selected ? ' is-selected' : ''}`}
+                  onClick={() => onSelect(player.id)}
                 >
-                  {formatRankDelta(player)}
-                </span>
-              </button>
-            </li>
-          )
-        })}
-      </ul>
+                  <span className="col-rank">{player.rank}</span>
+                  <span className="col-player">
+                    <span className="player-flag" aria-hidden="true">
+                      {countryFlag(player.countryCode)}
+                    </span>
+                    <span className="player-name">{player.displayName}</span>
+                    <span className="player-country">{player.countryCode}</span>
+                  </span>
+                  <span className="col-points">{formatPoints(player.points)}</span>
+                  <span
+                    className={`col-move movement-${movement}`}
+                    title="Rank change vs previous week"
+                  >
+                    {formatRankDelta(player)}
+                  </span>
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      )}
     </div>
   )
 }
