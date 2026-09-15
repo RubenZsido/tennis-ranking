@@ -7,11 +7,12 @@ import { PlayerRankingList } from './PlayerRankingList'
 import '../ranking.css'
 
 export function RankingPage() {
-  const { players, getPlayerById } = usePlayers()
+  const { players, loading, error, getPlayerById, refreshPlayers } = usePlayers()
   const sortedPlayers = useMemo(
     () => [...players].sort((a, b) => a.rank - b.rank),
     [players],
   )
+  const rankingAsOf = sortedPlayers[0]?.rankingAsOf ?? rankingMeta.rankingAsOf
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [mobileShowDetail, setMobileShowDetail] = useState(false)
 
@@ -26,12 +27,33 @@ export function RankingPage() {
     setMobileShowDetail(false)
   }
 
+  if (loading) {
+    return (
+      <div className="ranking-app">
+        <p className="ranking-app-sub">Loading rankings…</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="ranking-app">
+        <p className="ranking-app-sub" role="alert">
+          {error}{' '}
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => void refreshPlayers()}>
+            Retry
+          </button>
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div className="ranking-app">
       <header className="ranking-app-header">
         <h1>ATP Singles Ranking</h1>
         <p className="ranking-app-sub">
-          As of {formatDate(rankingMeta.rankingAsOf)} · Top {sortedPlayers.length}
+          As of {formatDate(rankingAsOf)} · Top {sortedPlayers.length}
         </p>
       </header>
 

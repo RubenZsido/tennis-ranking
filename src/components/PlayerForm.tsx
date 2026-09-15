@@ -10,11 +10,12 @@ import {
 type Props = {
   initial?: Player | null
   existingIds: string[]
-  onSave: (player: Player) => void
+  saving?: boolean
+  onSave: (player: Player) => void | Promise<void>
   onCancel: () => void
 }
 
-export function PlayerForm({ initial, existingIds, onSave, onCancel }: Props) {
+export function PlayerForm({ initial, existingIds, saving = false, onSave, onCancel }: Props) {
   const isCreate = !initial
   const [form, setForm] = useState<PlayerFormData>(() =>
     initial ? playerToForm(initial) : playerToForm(createEmptyPlayer()),
@@ -38,7 +39,7 @@ export function PlayerForm({ initial, existingIds, onSave, onCancel }: Props) {
       setError(result.error)
       return
     }
-    onSave(result.player)
+    void onSave(result.player)
   }
 
   return (
@@ -49,8 +50,8 @@ export function PlayerForm({ initial, existingIds, onSave, onCancel }: Props) {
           <button type="button" className="btn btn-ghost" onClick={onCancel}>
             Cancel
           </button>
-          <button type="submit" className="btn btn-primary">
-            Save
+          <button type="submit" className="btn btn-primary" disabled={saving}>
+            {saving ? 'Saving…' : 'Save'}
           </button>
         </div>
       </div>
